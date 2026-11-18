@@ -1,4 +1,4 @@
-const baseUrl = "http://127.0.0.1:8000";
+const baseUrl = "https://indecisive-loopers-backend.onrender.com";
 
 export async function getStallId(id) {
   const url = `${baseUrl}/stalls/id/${id}`;
