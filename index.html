@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Indecisive Loopers' Prototype</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
     <header class="nav">
@@ -23,7 +23,15 @@
       <div class="hero-content">
         <h1>Find your campus meal.</h1>
         <p>
-          Menus, and prices — all in one place. <a id="mapLink" href="">🗺️</a>
+          Menus, and prices — all in one place.
+          <button
+            id="mapBtn"
+            class="map-btn"
+            type="button"
+            aria-label="View campus map"
+          >
+            🗺️
+          </button>
         </p>
         <div class="search">
           <input
@@ -38,11 +46,21 @@
           <button
             class="chip"
             type="button"
+            data-location="all"
+            aria-pressed="true"
+          >
+            All Locations
+          </button>
+
+          <button
+            class="chip"
+            type="button"
             data-location="LRC"
             aria-pressed="false"
           >
-            LRC
+            LRC (BLDG 23)
           </button>
+
           <button
             class="chip"
             type="button"
@@ -51,6 +69,7 @@
           >
             Building 41
           </button>
+
           <button
             class="chip"
             type="button"
@@ -59,6 +78,7 @@
           >
             Cafeteria
           </button>
+
           <button
             class="chip"
             type="button"
@@ -67,6 +87,7 @@
           >
             GYM Student Lounge
           </button>
+
           <button
             class="chip"
             type="button"
@@ -95,7 +116,7 @@
             />
           </div>
           <div class="field">
-            <label for="sortPrice">Sort</label>
+            <label for="sortPrice">Sort by Price</label>
             <select class="input" id="sortPrice" name="sortPrice">
               <option value="default">Default</option>
               <option value="price-asc">Cheapest to expensive</option>
@@ -121,14 +142,22 @@
             </select>
           </div>
           <div class="field">
-            <span class="field-title">Availability</span
-            ><label class="check"
-              ><input id="openOnly" type="radio" name="availability" /> Open
-              Now</label
-            ><label class="check"
-              ><input id="includeClosed" type="radio" name="availability" /> All
-              (Including Closed)</label
-            >
+            <span class="field-title">Availability</span>
+
+            <label class="check">
+              <input id="openOnly" type="radio" name="availability" />
+              Open Now
+            </label>
+
+            <label class="check">
+              <input id="availableOnly" type="radio" name="availability" />
+              Available Food Only
+            </label>
+
+            <label class="check">
+              <input id="includeClosed" type="radio" name="availability" />
+              All (Including Closed)
+            </label>
           </div>
           <div class="field">
             <span class="field-title">Best Sellers</span
@@ -154,6 +183,11 @@
         >
           Showing all food stalls.
         </p>
+        <!-- Cart Summary -->
+        <div id="cartSummary" class="cart-summary">
+          <p>Selected Items: 0</p>
+          <p>Total Cost: ₱0.00</p>
+        </div>
         <div class="stalls" id="stallList"></div>
         <section id="menu-container" class="grid grid-cols-3 gap-4">
           <!-- Cards will render here -->
@@ -166,6 +200,118 @@
         </button>
       </main>
     </div>
+
+    <!-- Food Image Viewer Dialog -->
+    <dialog id="imageDialog" class="image-dialog">
+      <div class="image-dialog-content">
+        <button
+          type="button"
+          id="closeImageBtn"
+          class="dialog-close"
+          aria-label="Close image viewer"
+        >
+          &times;
+        </button>
+
+        <div class="image-viewer">
+          <img id="expandedFoodImage" src="" alt="Expanded food image" />
+        </div>
+
+        <div class="image-controls">
+          <button type="button" id="zoomOutBtn" aria-label="Zoom out">−</button>
+          <button type="button" id="resetZoomBtn">Reset</button>
+          <button type="button" id="zoomInBtn" aria-label="Zoom in">+</button>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- Stall Menu Dialog -->
+    <dialog id="stallMenuDialog" class="stall-menu-dialog">
+      <div class="stall-menu-header">
+        <div>
+          <h2 id="menuStallName">Stall Menu</h2>
+          <p id="menuStallLocation">Campus Location</p>
+        </div>
+
+        <button
+          type="button"
+          id="closeMenuBtn"
+          class="dialog-close"
+          aria-label="Close stall menu"
+        >
+          &times;
+        </button>
+      </div>
+
+      <div class="stall-menu-body">
+        <p class="menu-description">
+          Explore the available food items and their prices.
+        </p>
+
+        <div id="stallMenuItems" class="stall-menu-items"></div>
+      </div>
+    </dialog>
+
+    <dialog id="mapDialog" class="map-dialog">
+      <div class="map-dialog-header">
+        <div>
+          <h2>USTP Campus Map</h2>
+          <p>Explore the locations around the campus.</p>
+        </div>
+
+        <button
+          id="closeMapBtn"
+          class="dialog-close"
+          type="button"
+          aria-label="Close campus map"
+        >
+          &times;
+        </button>
+      </div>
+
+      <div class="map-dialog-body">
+        <img
+          src="assets/ustp-campus-map.jpg"
+          alt="USTP campus map showing buildings, zones, and campus locations"
+          class="campus-map-image"
+        />
+      </div>
+    </dialog>
+
+    <!-- View Cart Dialog -->
+    <dialog id="cartDialog" class="cart-dialog">
+      <div class="cart-dialog-header">
+        <div>
+          <h2>Your Cart</h2>
+          <p>Review your selected food items.</p>
+        </div>
+
+        <button
+          id="closeCartBtn"
+          class="cart-close-btn"
+          type="button"
+          aria-label="Close cart"
+        >
+          &times;
+        </button>
+      </div>
+
+      <div id="cartItems" class="cart-items">
+        <!-- Cart items will be rendered here -->
+      </div>
+
+      <div class="cart-dialog-footer">
+        <p id="cartTotal">Total Cost: ₱0.00</p>
+        <p id="cartBudgetStatus"></p>
+      </div>
+
+      <div class="cart-dialog-footer">
+        <button id="clearCartBtn" class="clear-cart-btn" type="button">
+          Clear Cart
+        </button>
+      </div>
+    </dialog>
+
     <footer>
       USTP Meal Savers · Student-friendly campus food finder<br />
     </footer>
