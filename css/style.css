@@ -1426,3 +1426,39 @@ button:disabled {
   background: #dc3545;
   color: white;
 }
+.stall-operating-hours {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 5px;
+}
+.cart-stall-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--navy);
+  margin: 4px 0;
+}
+
+.cart-stall-location {
+  font-size: 0.8rem;
+  color: #777;
+  margin: 2px 0 6px;
+}
+.cart-history-controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 10px 16px;
+}
+
+.cart-history-controls button {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.cart-history-controls button:hover {
+  background: #f3f4f6;
+}

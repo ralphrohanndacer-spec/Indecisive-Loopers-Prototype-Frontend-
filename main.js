@@ -93,9 +93,15 @@ async function applyFilters() {
     }
 
     if (filters.locations.length > 0 && !filters.locations.includes("all")) {
-      filteredResults = filteredResults.filter((item) =>
-        filters.locations.includes(item.stall?.location),
-      );
+      filteredResults = filteredResults.filter((item) => {
+        return filters.locations.some((location) => {
+          if (location === "Studentpreneurs") {
+            return item.stall?.stall_type === "studentpreneur";
+          }
+
+          return item.stall?.location === location;
+        });
+      });
     }
 
     if (
@@ -361,11 +367,20 @@ async function openStallMenu(stall, stallName) {
         ? "○ Closed"
         : "● Unknown";
 
-  // Display status beside stall name
   menuStallName.appendChild(stallStatus);
 
-  // Keep the stall location
   menuStallLocation.textContent = stall?.location || "Campus";
+
+  document.querySelector(".stall-operating-hours")?.remove();
+
+  if (stall?.operating_hours) {
+    const operatingHours = document.createElement("p");
+
+    operatingHours.className = "stall-operating-hours";
+    operatingHours.textContent = `🕒 ${stall.operating_hours}`;
+
+    menuStallLocation.after(operatingHours);
+  }
 
   stallMenuItems.innerHTML = `
     <p class="menu-loading">Loading stall menu...</p>
@@ -531,6 +546,8 @@ function addToCart(item) {
     name: item.name,
     price: Number(item.price) || 0,
     imageUrl: item.image_url || "",
+    stallName: item.stall?.name || "Unknown Stall",
+    stallLocation: item.stall?.location || "Campus",
     quantity: 1,
   });
 
@@ -641,10 +658,18 @@ function renderCartItems() {
       const itemName = document.createElement("h3");
       itemName.textContent = item.name;
 
+      const stallName = document.createElement("p");
+      stallName.className = "cart-stall-name";
+      stallName.textContent = `${item.stallName}`;
+
+      const stallLocation = document.createElement("p");
+      stallLocation.className = "cart-stall-location";
+      stallLocation.textContent = `Location: ${item.stallLocation}`;
+
       const itemPrice = document.createElement("p");
       itemPrice.textContent = `₱${item.price.toFixed(2)} each`;
 
-      itemInfo.append(itemName, itemPrice);
+      itemInfo.append(itemName, stallName, stallLocation, itemPrice);
 
       const controls = document.createElement("div");
       controls.className = "cart-item-controls";
